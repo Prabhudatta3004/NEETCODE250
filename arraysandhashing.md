@@ -181,3 +181,87 @@ class Solution:
 ```
 
 This is an unique solution where we need to create a defaultdict of type list where we can keep on appending the strings as per the lookup as index , but since lookup is a list we need to make it immutable to make an index out of it so we convert it into a tuple and later we just return a list of all values as the answer wants us to give,.
+
+# ENCODE AND DECODE STRINGS:
+
+**Encode and Decode Strings**Solved
+
+**Design an algorithm to encode a list of strings to a single string. The encoded string is then decoded back to the original list of strings.**
+
+**Please implement `encode` and `decode`**
+
+**Example 1:**
+
+`Input: ["neet","code","love","you"]
+
+Output:["neet","code","love","you"]`
+
+My intuition :
+
+For me the first intuition the encoding is simple — I can combine all the mini string to create a new big string that can be sent for decoding. But for decoding we need to divide the bigger string. So in order to do that I can have the length of each string added along with a delimiter that marks the beginning of a string.
+
+CODE:
+
+```python
+class Codec:
+    def encode(self, strs: List[str]) -> str:
+        """Encodes a list of strings to a single string.
+        """
+        final_str = ""
+        for s in strs:
+            final_str += str(len(s)) + "#" + s
+        return final_str 
+        
+
+    def decode(self, s: str) -> List[str]:
+        """Decodes a single string to a list of strings.
+        """
+        i = 0
+        res = []
+        while i < len(s):
+            j = i
+            while s[j] != "#":
+                j +=1
+            length = int(s[i:j])
+            i = j + 1
+            j = i + length
+            res.append(s[i:j])
+            i = j
+        return res
+
+# Your Codec object will be instantiated and called as such:
+# codec = Codec()
+# codec.decode(codec.encode(strs))
+```
+
+# PRODUCT OF AN ARRAY EXCEPT ITSELF
+
+**Given an integer array `nums`, return an array `output` where `output[i]` is the product of all the elements of `nums` except `nums[i]`.**
+
+**Each product is guaranteed to fit in a 32-bit integer.**
+
+**Follow-up: Could you solve it in O(n)*O*(*n*) time without using the division operation?**
+
+**Example 1:**
+
+`Input: nums = [1,2,4,6]
+
+Output: [48,24,12,8]`
+
+My Intuition:
+
+BRUTE FORCE:
+
+We can sweep through the list for each element and put a check that if the element is same we continue without multiplying and pushing the result into a result list
+
+This will cost some Time Complexity of O(N^2) and a space complexity of O(N) due to the resultant array.
+
+Better/Optimal Solution:
+
+We need to store two things the prefix product and the postfix product, well we can return the prefix product and the postfix product which will exclude the current element.
+
+This can be done in one sweep with extra space though
+
+TC will be O(N) and SC would be O(N) too
+
+basically we need to multiply the prefix value of the previous element and the postfix product of the next element
