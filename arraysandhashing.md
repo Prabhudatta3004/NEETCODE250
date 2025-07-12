@@ -265,3 +265,108 @@ This can be done in one sweep with extra space though
 TC will be O(N) and SC would be O(N) too
 
 basically we need to multiply the prefix value of the previous element and the postfix product of the next element
+
+```python
+class Solution:
+    def productExceptSelf(self, nums: List[int]) -> List[int]:
+        prefix = [0] * len(nums)
+        postfix = [0] * len(nums)
+        res = [0] * len(nums)
+        prefix[0] = postfix[len(nums)-1] = 1
+
+        for i in range(1,len(nums)):
+            prefix[i] = prefix[i-1] * nums[i-1]
+        for j in range(len(nums)-2 , -1 , -1):
+            postfix[j] = postfix[j+1] * nums[j+1]
+        
+        for i in range(len(nums)):
+                res[i] = prefix[i] * postfix[i]
+        return res
+```
+
+We can further optimize it’s space complexity
+
+Lets take only the result array with all 1s of same size that of nums, Now we can make modifications on it to get the output
+
+For prefix what we can do is we can use a variable, that will store the value of previous prefixes and that can be stored In the res and same can be done for postfix.
+
+```python
+class Solution:
+    def productExceptSelf(self, nums: List[int]) -> List[int]:
+        res = [1] * len(nums)
+
+        prefix = 1
+        for i in range(len(nums)):
+            res[i] = prefix
+            prefix *= nums[i]
+        
+        postfix = 1
+        for i in range(len(nums)-1,-1,-1):
+            res[i] *= postfix
+            postfix *= nums[i]
+        
+        return res
+       
+```
+
+# VALID SUDOKU
+
+Determine if a `9 x 9` Sudoku board is valid. Only the filled cells need to be validated **according to the following rules**:
+
+1. Each row must contain the digits `1-9` without repetition.
+2. Each column must contain the digits `1-9` without repetition.
+3. Each of the nine `3 x 3` sub-boxes of the grid must contain the digits `1-9` without repetition.
+
+**Note:**
+
+- A Sudoku board (partially filled) could be valid but is not necessarily solvable.
+- Only the filled cells need to be validated according to the mentioned rules.
+
+My intuition :
+
+The question says that we can check if there are no repetition 1. Rowwise 2. Columnwise 3. In 3*3 matrices of the sudoku board
+
+For non repetition check we can put all element in a set and check if the element already exists if yes return False, since all the three has to be satisfied we need to have a check for rows, columns and smaller matrices. For storing the key:value pair per matrix we can do one thing divide the row value//3 and column value//3 this will yield in 0,1,2 indices that can be used as keys for the boxes. so the index will be [r//3,c//3]
+
+This can be solved in O(1) TC and O(1) SC, the TC is O(1) because there is no parsing the board one by one rather we are doing lookup,
+
+CODE:
+
+```python
+class Solution:
+    def isValidSudoku(self, board: List[List[str]]) -> bool:
+        cols = defaultdict(set)
+        rows = defaultdict(set)
+        squares = defaultdict(set)  
+
+        for r in range(9):
+            for c in range(9):
+                if board[r][c] == ".":
+                    continue
+                if ( board[r][c] in rows[r]
+                    or board[r][c] in cols[c]
+                    or board[r][c] in squares[(r // 3, c // 3)]):
+                    return False
+
+                cols[c].add(board[r][c])
+                rows[r].add(board[r][c])
+                squares[(r // 3, c // 3)].add(board[r][c])
+
+        return True
+```
+
+# LONGEST CONSECUTIVE SUBSEQUENCE:
+
+**Given an array of integers `nums`, return *the length* of the longest consecutive sequence of elements that can be formed.**
+
+**A *consecutive sequence* is a sequence of elements in which each element is exactly `1` greater than the previous element. The elements do *not* have to be consecutive in the original array.**
+
+**You must write an algorithm that runs in `O(n)` time.**
+
+**Example 1:**
+
+`Input: nums = [2,20,4,10,3,4,5]
+
+Output: 4`
+
+CODE:
